@@ -7,8 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 ### Planned
 - **Phase-2 IndexedDB Migration:** Shift away from monolithic `localStorage` Zustand persistence to `Dexie.js` for `O(1)` relational object stores.
-- **Advanced Learning Features:** Progressive Case Reveal, Pre-Answer Confidence Ratings, Differential Diagnosis Builder, and Adaptive Question Difficulty.
+- **Advanced Learning Features:** Progressive Case Reveal, Pre-Answer Confidence Ratings, and Differential Diagnosis Builder.
 - **Phase-3 Cloud Sync:** Implement a local-first synchronization architecture for cross-device support.
+
+---
+
+## [1.2.0] - 2026-07-21
+### Added
+- **Deterministic Adaptive Engine:** Fully functional local adaptive difficulty engine powered by deterministic 7-tier classification utilities, utilizing historical error rates and confidence patterns to generate focused review sessions.
+- **Master Weak Concepts Dashboard:** Overhauled Overall Results page containing a comprehensive dashboard across all cases and sessions, combining `Answered Accuracy` and `Overall Score` with precise chronological concept mapping and adaptive review launchers.
+- **Comprehensive Test Suite:** 28 new Jest test cases strictly enforcing the correct behaviour of the deterministic aggregation pipeline.
 
 ---
 
