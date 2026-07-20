@@ -165,18 +165,51 @@ The AI must act as an educational data analyzer. It is instructed NOT to classif
 ## 4. Overall Aggregate Analysis
 **Endpoint:** `/api/generate-overall-analysis`
 
-**Purpose:** Similar to `/api/analyze-performance`, but analyzes aggregate cross-session/cross-case data to provide a macro-level review of the learner's weaknesses.
+**Purpose:** Consumes deterministically calculated summaries and weakly classified concepts from the local aggregation engine to provide a qualitative, macro-level review of the learner's weaknesses in markdown format.
 
 ### Request Payload
 ```json
 {
-  "incorrectAttempts": [],
-  "conceptArray": []
+  "summary": {
+    "uniqueCases": "number",
+    "completedTests": "number",
+    "totalQuestions": "number",
+    "answeredQuestions": "number",
+    "correct": "number",
+    "incorrect": "number",
+    "unanswered": "number",
+    "overallScore": "number",
+    "answeredAccuracy": "number",
+    "confidenceRecordedCount": "number",
+    "highConfidenceCorrect": "number",
+    "moderateConfidenceCorrect": "number",
+    "lowConfidenceCorrect": "number",
+    "highConfidenceError": "number",
+    "moderateConfidenceError": "number",
+    "lowConfidenceError": "number",
+    "confidenceNotRecorded": "number"
+  },
+  "weakConcepts": [
+    {
+      "conceptId": "string",
+      "conceptLabel": "string",
+      "totalAnswered": "number",
+      "errorCount": "number",
+      "highConfidenceErrorCount": "number",
+      "accuracyPercentage": "number",
+      "classification": "string"
+    }
+  ]
 }
 ```
 
 ### Expected AI Response Schema
-Identical schema structure to `/api/analyze-performance`.
+Returns a structured JSON object containing the raw generated markdown string.
+```json
+{
+  "report": "Generated markdown text..."
+}
+```
 
 ---
 

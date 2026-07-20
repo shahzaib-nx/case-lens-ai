@@ -967,15 +967,33 @@ Generating a new AI question after every answer increases latency, cost and inst
 **Decision:**
 Adaptive difficulty changes between small question batches.
 
-**Reason:**
-This preserves fixed active sessions and makes decisions more reliable.
-
 **Consequences:**
 
 * Active Exam Mode remains fixed
 * Learning Mode can generate focused review batches
 * Fewer AI calls
 * Easier result comparison
+
+---
+
+### Decision: Deterministic Adaptive Engine and Master Dashboard
+
+**Status:** Accepted
+
+**Context:**
+The AI cannot reliably read unstructured historical arrays to classify weakness or adapt difficulty, and frontend components should not house dense mathematical aggregation.
+
+**Decision:**
+Extract all aggregation, chronologically grouped performance sorting, and 7-tier confidence/accuracy classification rules into pure TypeScript functional utilities (`lib/results`). The adaptive engine and the Master Weak Concepts dashboard consume these purely deterministic outputs rather than querying the AI. 
+
+**Reason:**
+A 100% deterministic local pipeline ensures testability (covered by 28 specific edge-case unit tests) and guarantees the dashboard data precisely matches user expectations without hallucinated scores. The AI's role is relegated strictly to reading the deterministic summary string and providing qualitative feedback.
+
+**Consequences:**
+* AI prompts are simpler and cheaper (receive pre-calculated summaries).
+* Adaptive decisions fire reliably off explicit rules.
+* Heavy logic is removed from React components.
+* 28 new jest test cases strictly enforce behaviour.
 
 ---
 
