@@ -151,6 +151,11 @@ Each submitted MCQ produces one canonical review object. CaseLens AI strictly fo
 
 ## Technology Stack
 
+**Codebase Distribution (Approximate):**
+- **TypeScript / React (Frontend & Backend Routes)**: ~85%
+- **CSS / Tailwind (Styling & Design)**: ~10%
+- **JSON / Configs (Tooling & Dependencies)**: ~5%
+
 ### Frontend
 - Next.js (App Router)
 - React & TypeScript
