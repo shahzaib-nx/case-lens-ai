@@ -1,0 +1,206 @@
+.page {
+  min-height: calc(100svh - 130px);
+  padding: 56px 24px 84px;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(37, 99, 235, 0.04),
+      transparent 50%
+    ),
+    transparent;
+  color: var(--text-primary);
+}
+
+
+
+.headerRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.pageHeader p {
+  margin: 12px 0 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.actionButton {
+  min-height: 44px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.primaryButton {
+  color: #ffffff;
+  background: var(--accent-color);
+  border: 0;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.16);
+}
+
+.primaryButton:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 15px 30px rgba(37, 99, 235, 0.22);
+  transform: translateY(-2px);
+}
+
+.dangerButton {
+  color: #c75a5a;
+  background: transparent;
+  border: 1px solid #f0cece;
+}
+
+.dangerButton:hover {
+  background: #faeded;
+  border-color: #e8baba;
+  transform: translateY(-1px);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.emptyState h2 {
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.emptyState p {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.caseGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.caseCard {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 28px;
+  text-decoration: none;
+}
+
+.caseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.caseTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.caseDate {
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.casePreview {
+  margin: 0 0 20px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.caseFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badgeDifficulty {
+  color: #1a5c44;
+  background: #e3f2ec;
+}
+
+.badgeStatus {
+  color: var(--accent-color);
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.deleteButton {
+  color: #a34f4f;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 160ms ease;
+}
+
+.deleteButton:hover {
+  background: #faeded;
+}
+
+@media (max-width: 600px) {
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .headerActions {
+    width: 100%;
+  }
+  .actionButton {
+    flex: 1;
+  }
+  .caseHeader {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

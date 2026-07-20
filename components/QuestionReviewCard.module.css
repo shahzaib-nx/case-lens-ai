@@ -1,0 +1,66 @@
+.collapsibleWrapper {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.collapsibleButton {
+  width: 100%;
+  min-height: 56px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.5;
+  outline: none;
+}
+
+.collapsibleButton:hover,
+.collapsibleButton:focus-visible {
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
+  transform: translateY(-2px);
+  background: #ffffff;
+}
+
+.collapsibleButton svg {
+  transition: transform 0.2s ease;
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+}
+
+.collapsibleButton[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--card-border);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.collapsibleButton[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.collapsibleContent {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--card-border);
+  border-top: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 20px;
+  font-size: 14px;
+}

@@ -7,6 +7,9 @@ import Link from "next/link";
 import PieChart from "@/components/PieChart";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getApiUrl } from "@/lib/api-client";
+import { calculateConfidenceSummary, getConfidenceCalibration } from "@/lib/confidenceUtils";
+import styles from "./results.module.css";
 
 export default function OverallResults() {
   const router = useRouter();
@@ -23,20 +26,35 @@ export default function OverallResults() {
 
   if (attemptedCases.length === 0) {
     return (
-      <div className="max-w-xl mx-auto glass-card text-center mt-12">
-        <h2 className="mb-4 text-[var(--text-primary)]">No Results Yet</h2>
-        <p className="mb-8">Answer some case study questions to see your overall results.</p>
-        <div className="flex gap-4 justify-center">
-          <button onClick={() => router.push("/")} className="btn btn-secondary">Back to Home</button>
-          <button onClick={() => router.push("/history")} className="btn btn-secondary">View Case History</button>
-          <button onClick={() => router.push("/new-case")} className="btn btn-primary">Start New Case</button>
-        </div>
-      </div>
+      <main className={styles.page}>
+        <section className={styles.container}>
+          <div className={styles.emptyState}>
+            <h2>No Results Yet</h2>
+            <p>Complete some case study practice questions to view your performance breakdown.</p>
+            <div className={styles.emptyStateActions}>
+              <button onClick={() => router.push("/history")} className={`${styles.actionButton} ${styles.secondaryButton}`}>Case History</button>
+              <button onClick={() => router.push("/new-case")} className={`${styles.actionButton} ${styles.primaryButton}`}>Start New Case</button>
+            </div>
+          </div>
+        </section>
+      </main>
     );
   }
 
   const totalQuestions = attemptedCases.reduce((acc, c) => acc + (c.attempts?.length || 0), 0);
   const totalCorrect = attemptedCases.reduce((acc, c) => acc + (c.attempts?.filter(a => a.isCorrect).length || 0), 0);
+  
+  const allFinalAttempts: any[] = [];
+  attemptedCases.forEach(c => {
+    const latestAttemptsMap = new Map();
+    if (c.attempts) {
+      c.attempts.forEach(a => latestAttemptsMap.set(a.questionId, a));
+    }
+    allFinalAttempts.push(...Array.from(latestAttemptsMap.values()));
+  });
+
+  const confidenceSummary = calculateConfidenceSummary(allFinalAttempts);
+  const calibration = getConfidenceCalibration(confidenceSummary);
   
   // Aggregate concepts
   const conceptStats: Record<string, { total: number; correct: number; name: string }> = {};
@@ -61,7 +79,7 @@ export default function OverallResults() {
   const conceptArray = Object.values(conceptStats).map(stat => ({
     ...stat,
     accuracy: Math.round((stat.correct / stat.total) * 100)
-  })).sort((a, b) => b.total - a.total); // Sort by most tested
+  })).sort((a, b) => b.total - a.total);
 
   const handleGenerateAnalysis = async () => {
     setIsGenerating(true);
@@ -84,143 +102,144 @@ export default function OverallResults() {
         }
       });
 
-      const res = await fetch('/api/generate-overall-analysis', {
+      const res = await fetch(getApiUrl('/api/generate-overall-analysis'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ incorrectAttempts, conceptArray }),
       });
       
-      if (!res.ok) throw new Error("Failed to generate analysis");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(`Failed to generate analysis: ${errData.details || res.statusText || 'Unknown error'}`);
+      }
       
       const data = await res.json();
       setGlobalAnalysis(data.report);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Failed to generate overall analysis.");
+      alert(error.message);
     } finally {
       setIsGenerating(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-[var(--text-primary)]">Overall Results</h1>
-        <div className="flex gap-4">
-          <Link href="/reports/results-summary" className="btn btn-secondary text-sm">Print / PDF Summary</Link>
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
-        <div className="glass-card text-center">
-          <p className="text-lg opacity-80 mb-2">Total Score</p>
-          <div className="score-display mb-0">{totalCorrect} / {totalQuestions}</div>
-        </div>
-        <div className="glass-card text-center flex flex-col items-center justify-center">
-          <p className="text-lg opacity-80 mb-4">Average Score</p>
-          <PieChart correct={totalCorrect} total={totalQuestions} size={100} />
-        </div>
-        <div className="glass-card text-center flex flex-col justify-center">
-          <p className="text-lg opacity-80 mb-2">Cases Attempted</p>
-          <div className="text-4xl font-bold" style={{ color: "var(--accent-color)" }}>{attemptedCases.length}</div>
-        </div>
-      </div>
-
-      {conceptArray.length > 0 && (
-        <div className="mb-12">
-          <h2 className="mb-6">Performance by Concept</h2>
-          <div className="glass-card">
-            <div className="grid grid-cols-12 gap-4 pb-3 border-b text-sm font-bold text-gray-500 uppercase">
-              <div className="col-span-6">Concept</div>
-              <div className="col-span-3 text-center">Questions</div>
-              <div className="col-span-3 text-right">Accuracy</div>
-            </div>
-            <div className="space-y-4 pt-4">
-              {conceptArray.map((c, i) => (
-                <div key={i} className="grid grid-cols-12 gap-4 items-center">
-                  <div className="col-span-6 font-medium">{c.name}</div>
-                  <div className="col-span-3 text-center">{c.total}</div>
-                  <div className="col-span-3 text-right">
-                    <span className={`px-2 py-1 rounded text-sm font-bold ${c.accuracy >= 70 ? 'bg-[var(--success-bg)] text-[var(--success)]' : c.accuracy >= 40 ? 'bg-orange-100 text-orange-600' : 'bg-[var(--error-bg)] text-[var(--error)]'}`}>
-                      {c.accuracy}%
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+    <main className={styles.page}>
+      <section className={styles.container}>
+        <div className={styles.headerRow}>
+          <div className={styles.pageHeader}>
+            <h1>Overall Results</h1>
+            <p>Your performance across all case studies and concepts.</p>
+          </div>
+          <div className={styles.headerActions}>
+            <Link href="/report/results-summary" className={`${styles.actionButton} ${styles.secondaryButton}`}>
+              Print Summary
+            </Link>
           </div>
         </div>
-      )}
 
-      {/* Global Analysis Section */}
-      <div className="mb-12">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="m-0">AI Overall Analysis</h2>
-          <button 
-            onClick={handleGenerateAnalysis} 
-            disabled={isGenerating} 
-            className="btn btn-primary"
-          >
-            {isGenerating ? "Generating..." : globalAnalysis ? "Regenerate Analysis" : "Generate Analysis"}
-          </button>
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>Cases Attempted</span>
+            <span className={styles.statValue}>{attemptedCases.length}</span>
+          </div>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>Average Score</span>
+            <PieChart correct={totalCorrect} total={totalQuestions} size={100} />
+          </div>
+          <div className={styles.statCard}>
+            <span className={styles.statValue}>
+              <span className={styles.statValueAccent}>{totalCorrect}</span> / {totalQuestions}
+            </span>
+          </div>
         </div>
-        
-        {isGenerating && (
-          <div className="glass-card text-center py-12 mb-8">
-            <svg className="animate-spin h-8 w-8 text-[var(--accent-color)] mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <h3 className="mb-2 text-[var(--text-primary)]">Analyzing your performance...</h3>
-            <p className="text-sm opacity-80">Synthesizing weaknesses and building a custom study guide.</p>
-          </div>
-        )}
 
-        {!isGenerating && globalAnalysis && (
-          <div className="glass-card mb-8 animate-in fade-in duration-500">
-            <div className="markdown-content">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {globalAnalysis}
-              </ReactMarkdown>
-            </div>
-          </div>
-        )}
-
-        {!isGenerating && !globalAnalysis && (
-          <div className="glass-card text-center py-8 opacity-70">
-            <p>Click "Generate Analysis" to receive a personalized breakdown of your weaknesses and a tailored study guide based on your performance history.</p>
-          </div>
-        )}
-      </div>
-
-      <h2 className="mb-6">Breakdown by Case</h2>
-      <div className="grid gap-4 mb-8">
-        {attemptedCases.map((c) => {
-          const correct = c.attempts?.filter(a => a.isCorrect).length || 0;
-          const total = c.attempts?.length || 0;
-          return (
-            <div key={c.id} className="glass-card p-4 flex justify-between items-center hover:border-[var(--accent-color)] transition-colors">
+        <div className={styles.statsGrid} style={{ marginTop: '24px' }}>
+          <div className={styles.statCard} style={{ gridColumn: '1 / -1', alignItems: 'flex-start', textAlign: 'left' }}>
+            <span className={styles.statLabel} style={{ marginBottom: '20px' }}>Confidence Calibration</span>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', width: '100%', gap: '16px', marginBottom: '24px' }}>
               <div>
-                <h3 className="text-lg mb-1 font-bold">{c.title || "Untitled Case"}</h3>
-                <p className="text-sm opacity-60">
-                  Score: {correct} / {total} 
-                  ({Math.round((correct / (total || 1)) * 100)}%)
-                </p>
-            </div>
-              <div className="flex gap-2">
-                <Link href={`/cases/${c.id}`} className="btn btn-secondary text-sm">Analysis</Link>
-                <Link href={`/cases/${c.id}/results`} className="btn btn-secondary text-sm bg-gray-50">Review</Link>
+                <p style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.5px', marginBottom: '4px' }}>Responses</p>
+                <p style={{ fontSize: '28px', fontWeight: '800' }}>{confidenceSummary.totalRecorded}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--success)', fontWeight: 700, letterSpacing: '0.5px', marginBottom: '4px' }}>High / Correct</p>
+                <p style={{ fontSize: '28px', fontWeight: '800', color: 'var(--success)' }}>{confidenceSummary.correctHigh}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--success)', fontWeight: 700, letterSpacing: '0.5px', marginBottom: '4px' }}>Low / Correct</p>
+                <p style={{ fontSize: '28px', fontWeight: '800', color: 'var(--success)' }}>{confidenceSummary.correctLow}</p>
+              </div>
+              <div>
+                <p style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--error)', fontWeight: 700, letterSpacing: '0.5px', marginBottom: '4px' }}>High / Error</p>
+                <p style={{ fontSize: '28px', fontWeight: '800', color: 'var(--error)' }}>{confidenceSummary.incorrectHigh}</p>
               </div>
             </div>
-          );
-        })}
-      </div>
 
-      <div className="flex justify-between mt-8 pt-6 border-t" style={{ borderColor: "var(--card-border)" }}>
-        <button onClick={() => router.push("/")} className="btn btn-secondary">Back to Home</button>
-        <button onClick={() => router.push("/history")} className="btn btn-primary">View Case History</button>
-      </div>
-    </div>
+            <div style={{ padding: '20px', backgroundColor: 'var(--card-bg)', borderRadius: '12px', border: '1px solid var(--card-border)', width: '100%' }}>
+              <p style={{ fontWeight: 'bold', marginBottom: '6px', color: 'var(--text-primary)', fontSize: '16px' }}>
+                Classification: <span style={{ color: 'var(--accent-color)' }}>{calibration.classification}</span>
+              </p>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{calibration.evidence}</p>
+            </div>
+          </div>
+        </div>
+
+        {conceptArray.length > 0 && (
+          <>
+            <h2 className={styles.sectionHeader}>Performance by Concept</h2>
+            <div className={styles.tableCard}>
+              <div className={styles.tableHeader}>
+                <div>Concept</div>
+                <div>Questions</div>
+                <div>Accuracy</div>
+              </div>
+              <div>
+                {conceptArray.map((c, i) => (
+                  <div key={i} className={styles.tableRow}>
+                    <div className={styles.conceptName}>{c.name}</div>
+                    <div className={styles.conceptCount}>{c.total}</div>
+                    <div className={styles.conceptAccuracy}>
+                      <span className={`${styles.accuracyBadge} ${c.accuracy >= 70 ? styles.accuracyHigh : c.accuracy >= 40 ? styles.accuracyMedium : styles.accuracyLow}`}>
+                        {c.accuracy}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {globalAnalysis ? (
+          <div className={styles.aiAnalysisCard}>
+            <div className={styles.aiHeader}>
+              <div className={styles.aiIcon}>✨</div>
+              <h2 className={styles.aiTitle}>AI Performance Analysis</h2>
+            </div>
+            <div className={styles.aiContent}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{globalAnalysis}</ReactMarkdown>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.generateSection}>
+            <p>Want deeper insights? Generate a personalized AI analysis of your strengths and weaknesses based on your incorrect answers.</p>
+            <button 
+              onClick={handleGenerateAnalysis} 
+              className={`${styles.actionButton} ${styles.primaryButton}`}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <><span className={styles.spinner} style={{marginRight: '8px'}}></span> Analyzing Performance...</>
+              ) : (
+                "Generate AI Analysis"
+              )}
+            </button>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }

@@ -70,14 +70,16 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
       {/* SM-01 Mobile Navigation Drawer */}
       {menuOpen && (
         <div className="fixed inset-0 z-50 flex justify-end" style={{ backgroundColor: 'rgba(32,33,36,0.6)' }}>
-          <div className="w-64 h-full p-6 flex flex-col gap-4 border-l" style={{ backgroundColor: 'var(--nav-bg)', borderColor: 'var(--card-border)' }}>
-            <button className="self-end mb-4 text-gray-400" onClick={() => setMenuOpen(false)}>Close</button>
-            <Link href="/" className="text-lg">Home</Link>
-            <Link href="/new-case" className="text-lg">New Case</Link>
-            <Link href="/history" className="text-lg">Case History</Link>
-            <Link href="/results" className="text-lg">Overall Results</Link>
-            <Link href="/about" className="text-lg">About & Safety</Link>
-            <Link href="/privacy" className="text-lg">Privacy</Link>
+          <div className="w-64 h-full p-6 flex flex-col gap-4 border-l shadow-2xl" style={{ backgroundColor: 'var(--bg-color)', borderColor: 'var(--card-border)' }}>
+            <button className="btn btn-secondary self-end mb-4 text-sm px-4 py-2" onClick={() => setMenuOpen(false)}>
+              Close &times;
+            </button>
+            <Link href="/" className="btn btn-secondary w-full text-center justify-center">Home</Link>
+            <Link href="/new-case" className="btn btn-primary w-full text-center justify-center">Start New Case</Link>
+            <Link href="/history" className="btn btn-secondary w-full text-center justify-center">Case History</Link>
+            <Link href="/results" className="btn btn-secondary w-full text-center justify-center">Overall Results</Link>
+            <Link href="/about" className="btn btn-secondary w-full text-center justify-center">About & Safety</Link>
+            <Link href="/privacy" className="btn btn-secondary w-full text-center justify-center">Privacy Policy</Link>
           </div>
         </div>
       )}

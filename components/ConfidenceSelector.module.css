@@ -1,0 +1,121 @@
+.confidenceSelector {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--card-border);
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+}
+
+.confidenceHeader {
+  margin-bottom: 12px;
+}
+
+.confidenceHeader legend {
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 650;
+  padding: 0;
+}
+
+.confidenceHeader p {
+  margin: 5px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.confidenceOptions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.confidenceOption {
+  min-height: 76px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: flex-start;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.confidenceOption:hover {
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
+  transform: translateY(-2px);
+  background: #ffffff;
+}
+
+.confidenceOptionSelected {
+  background: rgba(37, 99, 235, 0.05);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.confidenceOptionSelected:hover {
+  background: rgba(37, 99, 235, 0.08);
+  transform: none;
+}
+
+.radioInput {
+  margin: 3px 10px 0 0;
+  accent-color: var(--accent-color);
+  width: 16px;
+  height: 16px;
+}
+
+.confidenceOptionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.confidenceOptionContent strong {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.confidenceOptionContent span {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.confidenceOptionDisabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.confidenceOptionDisabled:hover {
+  border-color: var(--card-border);
+  background: var(--card-bg);
+}
+
+.confidenceOptionSelected.confidenceOptionDisabled:hover {
+  border-color: var(--accent-color);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.confidenceError {
+  margin-top: 12px;
+  color: var(--error);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .confidenceOptions {
+    grid-template-columns: 1fr;
+  }
+  
+  .confidenceOption {
+    min-height: 64px;
+  }
+}

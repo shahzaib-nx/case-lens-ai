@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const ai = new OpenAI({ 
+  apiKey: process.env.GROQ_API_KEY || "",
+  baseURL: "https://api.groq.com/openai/v1"
+});
 
 export async function POST(req: Request) {
   try {
@@ -24,15 +27,13 @@ Please provide a highly detailed, comprehensive markdown report (~1000-1500 word
 Use markdown formatting including H1-H3 headings, bullet points, and tables where appropriate to make the report easy to read.
 Do not use placeholders, and do not reference the JSON data format directly in your response. Speak directly to the student.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview",
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      config: {
-        temperature: 0.7,
-      },
+    const response = await ai.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
     });
 
-    const report = response.text;
+    const report = response.choices[0].message.content;
     if (!report) {
       throw new Error("No report generated from AI.");
     }

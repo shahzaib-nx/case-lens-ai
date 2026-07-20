@@ -1,0 +1,234 @@
+.page {
+  min-height: calc(100svh - 130px);
+  padding: 56px 24px 84px;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(37, 99, 235, 0.04),
+      transparent 50%
+    ),
+    transparent;
+  color: var(--text-primary);
+}
+
+
+
+.utilityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 38px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: color 160ms ease;
+}
+
+.backLink:hover {
+  color: var(--accent-color);
+}
+
+.utilityActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.actionButton {
+  min-height: 44px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.primaryButton {
+  color: #ffffff;
+  background: var(--accent-color);
+  border: 0;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.16);
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: 0 15px 30px rgba(37, 99, 235, 0.22);
+  transform: translateY(-2px);
+}
+
+.primaryButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.secondaryButton {
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.secondaryButton:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.ghostButton {
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  min-height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.ghostButton:hover {
+  color: var(--text-primary);
+  background: rgba(37, 99, 235, 0.06);
+  border-color: rgba(37, 99, 235, 0.12);
+  transform: translateY(-1px);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.03);
+}
+
+.emptyState h2 {
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.emptyState p {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.emptyStateActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.pageHeader {
+  margin-bottom: 32px;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+.caseContentPreview {
+  margin: 16px 0 0;
+  padding-left: 20px;
+  border-left: 3px solid rgba(37, 99, 235, 0.3);
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.analysisCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 40px;
+  margin-bottom: 40px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.03);
+}
+
+.analysisContent {
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.analysisContent h1,
+.analysisContent h2,
+.analysisContent h3 {
+  color: var(--text-primary);
+  margin: 32px 0 16px;
+}
+
+.analysisContent ul,
+.analysisContent ol {
+  padding-left: 24px;
+  margin-bottom: 24px;
+  color: var(--text-secondary);
+}
+
+.analysisContent p {
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+}
+
+.analysisContent strong {
+  color: var(--text-primary);
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 32px;
+  border-top: 1px solid var(--card-border);
+}
+
+.rightActions {
+  display: flex;
+  gap: 12px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .footerActions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .rightActions {
+    flex-direction: column;
+  }
+  .utilityRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

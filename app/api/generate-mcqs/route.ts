@@ -3,18 +3,21 @@ import { generateMCQs } from "@/lib/ai";
 
 export async function POST(req: Request) {
   try {
-    const { text, analysis } = await req.json();
+    const { text, analysis, difficulty, examStyle, questionCount, adaptiveContext, avoidQuestionIds } = await req.json();
     if (!text || !analysis) {
       return NextResponse.json({ error: "Missing text or analysis" }, { status: 400 });
     }
-    const rawMcqs = await generateMCQs(text, analysis);
+    const rawMcqs = await generateMCQs(text, analysis, difficulty, examStyle, questionCount, adaptiveContext, avoidQuestionIds);
     
     // Add unique IDs to questions and options
     const mcqs = rawMcqs.map((q: any) => {
       const questionId = crypto.randomUUID();
-      const optionsWithIds = q.options.map((opt: any) => ({
+      
+      const shuffledRawOptions = [...q.options].sort(() => Math.random() - 0.5);
+      const optionsWithIds = shuffledRawOptions.map((opt: any, idx: number) => ({
         ...opt,
         id: crypto.randomUUID(),
+        label: String.fromCharCode(65 + idx)
       }));
       
       const correctOption = optionsWithIds.find((o: any) => o.isCorrect);

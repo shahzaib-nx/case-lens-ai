@@ -14,123 +14,104 @@ export default function ParticleBackground() {
 
     let particles: any[] = [];
     let animationFrameId: number;
-    let mouse = { x: -1000, y: -1000 }; // initially far away
+
+    let mouseX = -1000;
+    let mouseY = -1000;
+    let hasMouse = false;
 
     const init = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       
-      const particleCount = Math.floor((window.innerWidth * window.innerHeight) / 6000);
+      // Increase number of dots by reducing the divisor
+      const particleCount = Math.floor((window.innerWidth * window.innerHeight) / 1500);
       particles = [];
       
-      const colors = ["107, 78, 255", "33, 150, 243", "0, 200, 150", "255, 64, 129", "255, 171, 64"];
+      const colors = ["#4285F4", "#EA4335", "#FBBC05", "#A142F4", "#1a1a1a"];
 
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          radius: Math.random() * 2 + 1.5,
-          color: colors[Math.floor(Math.random() * colors.length)]
+          baseVx: (Math.random() - 0.5) * 0.5,
+          baseVy: (Math.random() - 0.5) * 0.5,
+          // Make dots smaller
+          radius: Math.random() * 1.2 + 0.5,
+          color: colors[Math.floor(Math.random() * colors.length)],
         });
       }
     };
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const accentColor = "107, 78, 255"; // var(--accent-color) roughly #6B4EFF
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.baseVx;
+        p.y += p.baseVy;
 
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        // Wrap around edges
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
 
-        const mouseDx = p.x - mouse.x;
-        const mouseDy = p.y - mouse.y;
-        const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
-
-        let baseOpacity = 0.25;
-        if (mouseDist < 150) {
-          baseOpacity = 0.25 + (0.65 * (1 - mouseDist / 150)); // increases up to 0.9 when very close
+        // Visual "lift" effect (zoom in when close to cursor)
+        let zoomScale = 1;
+        let opacity = 0.3; // base opacity (increased by 10%)
+        if (hasMouse) {
+           const mdx = mouseX - p.x;
+           const mdy = mouseY - p.y;
+           const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+           if (mdist < 150) {
+              const proximity = (150 - mdist) / 150;
+              // Zoom in up to 2.5x normal size
+              zoomScale = 1 + (1.5 * proximity);
+              // Increase opacity by 10% based on proximity
+              opacity = Math.min(1, 0.3 + (0.1 * proximity));
+           }
         }
+
+        const currentRadius = p.radius * zoomScale;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${p.color}, ${baseOpacity})`;
+        ctx.arc(p.x, p.y, currentRadius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = opacity;
         ctx.fill();
 
-        // Connect particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 100) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(${p.color}, ${0.15 * (1 - dist / 100)})`;
-            ctx.lineWidth = 1;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        }
-
-        // Connect to mouse
-        if (mouseDist < 150) {
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(${p.color}, ${0.2 * (1 - mouseDist / 150)})`;
-          ctx.lineWidth = 1.5;
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.stroke();
-          
-          // Slight repulsion from mouse
-          if (mouseDist < 50) {
-             p.x += mouseDx * 0.01;
-             p.y += mouseDy * 0.01;
-          }
-          
-          // Dancing effect
-          p.x += (Math.random() - 0.5) * 3;
-          p.y += (Math.random() - 0.5) * 3;
-        }
+        // Lines removed as requested.
       }
 
       animationFrameId = requestAnimationFrame(animate);
     };
+
+    init();
+    animate();
 
     const handleResize = () => {
       init();
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      hasMouse = true;
     };
     
     const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
-    }
-
-    init();
-    animate();
+      hasMouse = false;
+    };
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseleave", handleMouseLeave);
+    document.body.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseleave", handleMouseLeave);
+      document.body.removeEventListener("mouseleave", handleMouseLeave);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

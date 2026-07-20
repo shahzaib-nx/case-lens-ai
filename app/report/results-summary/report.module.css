@@ -1,0 +1,189 @@
+.page {
+  min-height: calc(100svh - 130px);
+  padding: 40px 24px 84px;
+  color: var(--text-primary);
+}
+
+.reportCard {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 48px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.04);
+}
+
+.utilityRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.backLink {
+  color: var(--text-secondary);
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  transition: color 160ms ease;
+}
+
+.backLink:hover {
+  color: var(--accent-color);
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.pageHeader h1 {
+  margin: 0 0 8px;
+  color: var(--text-primary);
+}
+
+.pageHeader p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 56px;
+}
+
+.statCard {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.statLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+}
+
+.statValue {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent-color);
+  letter-spacing: -0.03em;
+}
+
+.breakdownSection h2 {
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--card-border);
+}
+
+.caseRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.caseRow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+}
+
+.caseInfo h3 {
+  font-size: 16px;
+  font-weight: 650;
+  margin: 0 0 4px;
+  color: var(--text-primary);
+}
+
+.caseInfo p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.caseScore {
+  text-align: right;
+}
+
+.scoreFraction {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-bottom: 2px;
+}
+
+.scorePercent {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--card-border);
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+@media print {
+  .page {
+    padding: 0;
+    min-height: auto;
+    background: none;
+  }
+  .container {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+  .utilityRow {
+    display: none;
+  }
+  .caseRow {
+    break-inside: avoid;
+    border: 1px solid #ccc;
+    background: transparent;
+  }
+  .statCard {
+    border: 1px solid #ccc;
+    background: transparent;
+  }
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  .container {
+    padding: 24px;
+  }
+}
