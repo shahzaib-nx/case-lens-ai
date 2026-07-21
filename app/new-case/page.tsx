@@ -7,6 +7,8 @@ import styles from "./new-case.module.css";
 import { useCaseStore } from "@/lib/store";
 import { Dropdown, DropdownOption } from "@/components/Dropdown";
 import { getApiUrl } from "@/lib/api-client";
+import { useConfirm } from "@/components/ConfirmProvider";
+import { useToast } from "@/components/ToastProvider";
 
 type Difficulty = "Basic" | "Intermediate" | "Advanced";
 type ExamStyle = "General" | "NRE" | "USMLE" | "PLAB" | "MRCP";
@@ -35,6 +37,8 @@ const exampleCases = [
 
 export default function NewCasePage() {
   const router = useRouter();
+  const { confirm } = useConfirm();
+  const { toast } = useToast();
 
   const [title, setTitle] = useState("");
   const [caseContent, setCaseContent] = useState("");
@@ -116,9 +120,12 @@ export default function NewCasePage() {
     event.preventDefault();
     setSubmitAttempted(true);
 
-    if (!isCaseValid || isSubmitting) {
+    if (!isCaseValid) {
+      if (validationMessage) toast(validationMessage, "error");
       return;
     }
+    
+    if (isSubmitting) return;
 
     setIsSubmitting(true);
 
@@ -188,14 +195,14 @@ export default function NewCasePage() {
       useCaseStore.getState().addCase(caseRecord);
 
       if (progressiveGenerationStatus === "failed" && caseFormat === "progressive") {
-        alert("Progressive presentation is unavailable. The educational analysis was generated successfully, but the case could not be organised into a reliable staged format. Continuing with Complete Case.");
+        await confirm({ title: "Progressive Mode Unavailable", message: "Progressive presentation is unavailable. The educational analysis was generated successfully, but the case could not be organised into a reliable staged format. Continuing with Complete Case.", confirmText: "OK", hideCancel: true });
       }
 
       // 3. Navigate to the actual case viewer
       router.push(`/case?id=${caseId}`);
     } catch (error) {
       console.error("Unable to create case:", error);
-      alert(`Failed to analyze case. Error: ${error instanceof Error ? error.message : String(error)}`);
+      await confirm({ title: "Analysis Failed", message: `Failed to analyze case. Error: ${error instanceof Error ? error.message : String(error)}`, confirmText: "OK", hideCancel: true });
       setIsSubmitting(false);
     }
   }

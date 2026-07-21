@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
       })
     ) {
       clearAllCases();
-      alert("All local data has been cleared.");
+      await confirm({ title: "Success", message: "All local data has been cleared.", confirmText: "OK", hideCancel: true });
       router.push("/history");
     }
   };

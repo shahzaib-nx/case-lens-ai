@@ -85,6 +85,8 @@ Save or print educational reports
 | Exam Mode | Available | Delayed feedback |
 | Adaptive Difficulty | Available | Deterministic local engine |
 | Master Weak Concepts Dashboard | Available | Cross-session aggregation |
+| Floating Notifications & Popups | Available | Unified `ToastProvider` & `ConfirmProvider` |
+| AI Resilience Engine | Available | Automatic error-recovery and retries |
 | IndexedDB migration | Planned | Replaces monolithic persistence |
 | Cloud synchronization | Future | Not currently available |
 | Medical source ingestion | Future | Requires licensing and review |

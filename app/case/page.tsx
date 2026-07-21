@@ -66,16 +66,21 @@ function CaseAnalysisContent() {
     router.push(`/new-case?edit=${currentCase.id}`);
   };
 
-  const handleCopyAnalysis = () => {
+  const handleCopyAnalysis = async () => {
     if (currentCase.analysis) {
-      navigator.clipboard.writeText(currentCase.analysis);
-      alert("Analysis copied to clipboard!");
+      try {
+        await navigator.clipboard.writeText(currentCase.analysis);
+        await confirm({ title: "Success", message: "Analysis copied to clipboard!", confirmText: "OK", hideCancel: true });
+      } catch (err) {
+        console.error(err);
+        await confirm({ title: "Error", message: "Failed to copy text.", confirmText: "OK", hideCancel: true });
+      }
     }
   };
 
   const handleGenerateMCQs = async () => {
     if (!navigator.onLine) {
-      alert("Cannot generate MCQs while offline.");
+      await confirm({ title: "Offline", message: "Cannot generate MCQs while offline.", confirmText: "OK", hideCancel: true });
       return;
     }
     
@@ -106,8 +111,8 @@ function CaseAnalysisContent() {
       useCaseStore.getState().updateCase(currentCase.id, { mcqs: data.mcqs });
       router.push(`/case/practice?id=${currentCase.id}`);
     } catch (err: any) {
-      setError(err.message || "Failed to generate MCQs.");
-      alert("AI Service temporarily unavailable. Please try again later.");
+      console.error("Failed to generate MCQs:", err);
+      await confirm({ title: "Service Unavailable", message: "AI Service temporarily unavailable. Please try again later.", confirmText: "OK", hideCancel: true });
     } finally {
       setIsGeneratingMCQs(false);
     }

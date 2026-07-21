@@ -8,6 +8,7 @@ import { ConfidenceSelector } from "@/components/ConfidenceSelector";
 import { ConfidenceLevel, getConfidenceInsight } from "@/lib/confidenceUtils";
 import { QuestionReviewCard } from "@/components/QuestionReviewCard";
 import { buildQuestionReviewAnalysis } from "@/lib/reviewBuilder";
+import { useToast } from "@/components/ToastProvider";
 
 export function getRemainingSeconds(expiresAt?: string, now: number = Date.now()): number | null {
   if (!expiresAt) return null;
@@ -35,6 +36,7 @@ function PracticePageContent() {
   // Local state for UI only
   const [now, setNow] = useState(Date.now());
   const [showAllOptions, setShowAllOptions] = useState(false);
+  const { toast } = useToast();
   const [confidenceError, setConfidenceError] = useState("");
   const expiryHandledRef = useRef<{ qIdx: number, sessionId: string } | null>(null);
 
@@ -230,11 +232,12 @@ function PracticePageContent() {
     setConfidenceError("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedOption) return;
     
     if (!confidence) {
       setConfidenceError("Select your confidence level before submitting.");
+      toast("Select your confidence level before submitting.", "error");
       return;
     }
     setConfidenceError("");
@@ -262,9 +265,14 @@ function PracticePageContent() {
 
       submitPracticeAttempt(currentCase.id, activeSession.id, attempt);
       setShowAllOptions(false);
+      
+      if (activeSession.mode === "exam") {
+        toast("Response submitted", "success");
+        advancePracticeQuestion(currentCase.id, activeSession.id);
+      }
     } catch (err: any) {
-      alert("Error submitting answer: " + err.message);
       console.error(err);
+      await confirm({ title: "Error", message: "Error submitting answer: " + err.message, confirmText: "OK", hideCancel: true });
     }
   };
 
@@ -429,12 +437,6 @@ function PracticePageContent() {
             {currentIndex >= questions.length - 1 ? "Finish Exam" : "Next Question"}
           </button>
         ) : null}
-      </div>
-      <div className="text-center mt-4 text-xs font-mono opacity-40 bg-gray-100 p-2 rounded max-w-xs mx-auto overflow-hidden">
-        v1.0.5 | SESS: {activeSession.id} |
-        SUB: {isSubmitted ? 'Y' : 'N'} | 
-        ATT: {activeSession.attempts?.length || 0} | 
-        Q-ID: {currentQuestion?.id || 'none'}
       </div>
     </div>
   );

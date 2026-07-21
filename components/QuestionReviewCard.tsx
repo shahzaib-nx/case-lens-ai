@@ -239,30 +239,40 @@ export function QuestionReviewCard({ question, analysis, hideQuestionContext = f
           </button>
           {expandedSections["error"] && (
             <div className={`${styles.collapsibleContent} flex flex-col gap-4`}>
-              {analysis.probableErrorType && (
-                <div>
-                  <div className="font-bold">Probable Error Type:</div>
-                  <div>{analysis.probableErrorType}</div>
-                </div>
-              )}
-              {analysis.conceptImpact && (
-                <div>
-                  <div className="font-bold">Concept Impact:</div>
-                  <div className="capitalize">{analysis.conceptImpact.classification.replace(/-/g, " ")}</div>
-                  <div className="text-[var(--text-secondary)] mt-1">{analysis.conceptImpact.evidenceSummary}</div>
-                  <div className="text-[var(--text-secondary)] mt-1">Review Priority: <span className="capitalize font-semibold">{analysis.conceptImpact.reviewPriority}</span></div>
-                </div>
-              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {analysis.probableErrorType && (
+                  <div className="bg-gray-50 border border-gray-100 rounded-lg p-4 shadow-sm">
+                    <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Probable Error Type</div>
+                    <div className="text-gray-900 font-medium">{analysis.probableErrorType}</div>
+                  </div>
+                )}
+                {analysis.conceptImpact && (
+                  <div className="bg-gray-50 border border-gray-100 rounded-lg p-4 shadow-sm">
+                    <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Concept Impact</div>
+                    <div className="capitalize text-gray-900 font-medium">{analysis.conceptImpact.classification.replace(/-/g, " ")}</div>
+                    <div className="text-gray-500 text-sm mt-1">{analysis.conceptImpact.evidenceSummary}</div>
+                    <div className="mt-3 text-sm">
+                      <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold mr-2">Priority</span>
+                      <span className={`capitalize font-bold px-2 py-1 rounded text-xs ${
+                        analysis.conceptImpact.reviewPriority === 'high' ? 'bg-red-100 text-red-700' :
+                        analysis.conceptImpact.reviewPriority === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'
+                      }`}>{analysis.conceptImpact.reviewPriority}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
               {analysis.adaptiveRecommendation && (
-                <div>
-                  <div className="font-bold">Adaptive Recommendation:</div>
-                  <div>{analysis.adaptiveRecommendation}</div>
+                <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-4 text-blue-900 shadow-sm">
+                  <div className="text-[11px] font-bold uppercase tracking-wider mb-1 opacity-70">Adaptive Recommendation</div>
+                  <div className="text-sm">{analysis.adaptiveRecommendation}</div>
                 </div>
               )}
-              {(analysis.timeSpentSeconds !== undefined || analysis.hintsUsed !== undefined) && (
-                <div className="border-t pt-2 mt-2">
-                  {analysis.timeSpentSeconds !== undefined && <div><strong>Time spent:</strong> {analysis.timeSpentSeconds} seconds ({analysis.submissionReason || "Manual submission"})</div>}
-                  {analysis.hintsUsed !== undefined && <div><strong>Hints used:</strong> {analysis.hintsUsed === 0 ? "None" : analysis.hintsUsed}</div>}
+
+              {analysis.timeSpentSeconds !== undefined && (
+                <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-2 text-sm text-gray-500">
+                  <span><strong>Time spent:</strong> {analysis.timeSpentSeconds} seconds</span>
+                  <span className="opacity-70 text-xs uppercase tracking-wider bg-gray-100 px-2 py-1 rounded">{analysis.submissionReason || "Manual"}</span>
                 </div>
               )}
             </div>

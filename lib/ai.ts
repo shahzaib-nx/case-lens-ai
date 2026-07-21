@@ -75,18 +75,28 @@ function getAiClient() {
 
 // Since some OpenAI-compatible models (like Grok) don't fully support structured outputs via json_schema,
 // we will instruct the model to return a JSON object, and rely on standard JSON response formatting.
-async function safeChatCompletion(prompt: string, model: string = "llama-3.3-70b-versatile", temperature: number = 0.2) {
+async function safeChatCompletion(prompt: string, model: string = "llama-3.3-70b-versatile", temperature: number = 0.2, maxRetries: number = 2) {
   const ai = getAiClient();
-  const response = await ai.chat.completions.create({
-    model,
-    messages: [{ role: "user", content: prompt }],
-    temperature,
-    response_format: { type: "json_object" },
-  });
+  let attempt = 0;
   
-  const text = response.choices[0].message.content;
-  if (!text) throw new Error("No response text from AI.");
-  return JSON.parse(text);
+  while (attempt <= maxRetries) {
+    try {
+      const response = await ai.chat.completions.create({
+        model,
+        messages: [{ role: "user", content: prompt }],
+        temperature,
+        response_format: { type: "json_object" },
+      });
+      
+      const text = response.choices[0].message.content;
+      if (!text) throw new Error("No response text from AI.");
+      return JSON.parse(text);
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      console.warn(`AI request or JSON parse failed, retrying (${attempt + 1}/${maxRetries})...`, error);
+      attempt++;
+    }
+  }
 }
 
 export async function analyzeCaseStudy(caseStudyText: string) {

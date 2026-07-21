@@ -11,6 +11,7 @@ import { getApiUrl } from "@/lib/api-client";
 import { aggregateOverallResults } from "@/lib/results/aggregateOverallResults";
 import { sortWeakConcepts } from "@/lib/results/sortWeakConcepts";
 import styles from "./results.module.css";
+import { useConfirm } from "@/components/ConfirmProvider";
 
 export default function OverallResults() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function OverallResults() {
   const [mounted, setMounted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isStartingAdaptive, setIsStartingAdaptive] = useState(false);
+  const { confirm } = useConfirm();
 
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
@@ -82,13 +84,13 @@ export default function OverallResults() {
       
     } catch (error: any) {
       console.error(error);
-      alert(error.message);
+      await confirm({ title: "Analysis Failed", message: error.message, confirmText: "OK", hideCancel: true });
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleLaunchAdaptive = (conceptId: string, decisionId: string) => {
+  const handleLaunchAdaptive = async (conceptId: string, decisionId: string) => {
     if (isStartingAdaptive) return;
     setIsStartingAdaptive(true);
     try {
@@ -104,7 +106,7 @@ export default function OverallResults() {
       });
       router.push(`/case/practice?id=${cse.id}&sessionId=${sessionId}`);
     } catch (e: any) {
-      alert(e.message);
+      await confirm({ title: "Error", message: e.message, confirmText: "OK", hideCancel: true });
       setIsStartingAdaptive(false);
     }
   };
@@ -249,18 +251,17 @@ export default function OverallResults() {
             <p style={{color: 'var(--text-secondary)', padding: '20px 0', textAlign: 'center'}}>No consistent weaknesses identified across tests.</p>
           ) : (
             <>
-              <div className={styles.tableHeader} style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr 1.5fr 1.5fr 1fr', paddingRight: '12px' }}>
+              <div className={styles.tableHeader} style={{ gridTemplateColumns: '2.5fr 1fr 1fr 1fr 1.5fr 2fr', paddingRight: '12px' }}>
                 <div style={{textAlign: 'left'}}>Concept</div>
                 <div style={{textAlign: 'center'}}>Errors</div>
                 <div style={{textAlign: 'center'}}>Questions Solved</div>
                 <div style={{textAlign: 'center'}}>Accuracy</div>
                 <div style={{textAlign: 'center'}}>High-Conf Errors</div>
                 <div style={{textAlign: 'left', paddingLeft: '12px'}}>Classification</div>
-                <div style={{textAlign: 'right'}}>Action</div>
               </div>
               <div>
                 {weakConcepts.map((c, i) => (
-                  <div key={i} className={styles.tableRow} style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr 1.5fr 1.5fr 1fr' }}>
+                  <div key={i} className={styles.tableRow} style={{ gridTemplateColumns: '2.5fr 1fr 1fr 1fr 1.5fr 2fr' }}>
                     <div className={styles.conceptName}>{c.conceptLabel}</div>
                     <div className={styles.conceptCount} style={{color: 'var(--error)', fontWeight: 'bold'}}>{c.errorCount}</div>
                     <div className={styles.conceptCount}>{c.totalAnswered}</div>
@@ -274,21 +275,6 @@ export default function OverallResults() {
                     </div>
                     <div style={{fontSize: '13px', color: 'var(--text-secondary)', paddingLeft: '12px'}}>
                       {formatClassification(c.classification)}
-                    </div>
-                    <div style={{textAlign: 'right'}}>
-                      {c.availableAdaptiveDecisionId ? (
-                        <button 
-                          onClick={() => handleLaunchAdaptive(c.conceptId, c.availableAdaptiveDecisionId!)}
-                          disabled={isStartingAdaptive}
-                          style={{
-                            padding: '6px 12px', background: 'var(--accent-color)', color: 'white', 
-                            borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', border: 'none', cursor: 'pointer'
-                          }}>
-                          Review
-                        </button>
-                      ) : (
-                        <span style={{fontSize: '12px', color: 'var(--text-secondary)'}}>View</span>
-                      )}
                     </div>
                   </div>
                 ))}

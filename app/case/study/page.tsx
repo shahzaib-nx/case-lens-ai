@@ -71,9 +71,9 @@ function StudyMaterialPageContent() {
         studyMaterials: [...(currentCase.studyMaterials || []), newMaterial]
       });
       
-    } catch (err) {
-      console.error(err);
-      alert("Failed to generate study material. Please try again.");
+    } catch (error) {
+      console.error(error);
+      await confirm({ title: "Error", message: "Failed to generate study material. Please try again.", confirmText: "OK", hideCancel: true });
     } finally {
       setGenerating(false);
     }

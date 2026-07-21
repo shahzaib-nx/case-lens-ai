@@ -11,6 +11,7 @@ import { getPracticeSessions, AdaptiveDecision, QuestionAttempt, getLatestSessio
 import { AdaptiveRecommendationCard } from "@/components/AdaptiveRecommendationCard";
 import { QuestionReviewCard } from "@/components/QuestionReviewCard";
 import { buildQuestionReviewAnalysis } from "@/lib/reviewBuilder";
+import { useConfirm } from "@/components/ConfirmProvider";
 
 function IndividualResultsPageContent() {
   const searchParams = useSearchParams();
@@ -24,6 +25,7 @@ function IndividualResultsPageContent() {
   
   const [generatingAdaptive, setGeneratingAdaptive] = useState(false);
   const [adaptiveDecisions, setAdaptiveDecisions] = useState<AdaptiveDecision[]>([]);
+  const { confirm } = useConfirm();
 
   useEffect(() => setMounted(true), []);
 
@@ -93,8 +95,8 @@ function IndividualResultsPageContent() {
   const correctCount = finalAttempts.filter(a => a.isCorrect).length;
   const unansweredCount = totalQuestions - finalAttempts.length;
 
-  const handleRetake = () => {
-    if (confirm("Are you sure you want to retake this quiz? Your previous session history will be preserved.")) {
+  const handleRetake = async () => {
+    if (await confirm({ title: "Retake Quiz", message: "Are you sure you want to retake this quiz? Your previous session history will be preserved.", confirmText: "Retake" })) {
       const mode = currentCase.practiceMode || "learning";
       const timer = currentCase.timerConfig || { mode: "none" };
       createPracticeSession(currentCase.id, mode, timer);
@@ -102,8 +104,8 @@ function IndividualResultsPageContent() {
     }
   };
 
-  const handleStartNewCase = () => {
-    if (confirm("Are you sure you want to start a new case?")) {
+  const handleStartNewCase = async () => {
+    if (await confirm({ title: "Start New Case", message: "Are you sure you want to start a new case?", confirmText: "Start" })) {
       router.push("/new-case");
     }
   };
@@ -159,10 +161,10 @@ function IndividualResultsPageContent() {
       );
       
       router.push(`/case/practice?id=${currentCase.id}`);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to generate adaptive questions. Please try again.");
-      setGeneratingAdaptive(false);
+    } catch (err: any) {
+      console.error("Failed to start adaptive session:", err);
+      await confirm({ title: "Error", message: "Failed to generate adaptive questions. Please try again.", confirmText: "OK", hideCancel: true });
+    } finally {setGeneratingAdaptive(false);
     }
   };
 
@@ -314,35 +316,7 @@ function IndividualResultsPageContent() {
 
       {!isLegacy && (
         <div className="mb-12">
-          <div className="p-4 mb-6 bg-gray-100 rounded text-xs overflow-auto text-black">
-            <strong>Adaptive Engine Debug Info:</strong><br/>
-            - adaptiveDifficultyEnabled: {currentCase.adaptiveDifficultyEnabled ? 'true' : 'false'}<br/>
-            - isLegacy: {isLegacy ? 'true' : 'false'}<br/>
-            - latestSession.status: {latestSession?.status}<br/>
-            - currentCase.adaptiveDecisions.length: {currentCase.adaptiveDecisions?.length || 0}<br/>
-            - activeDecisions (filtered): {adaptiveDecisions.length}<br/>
-            - latestSession.id: {latestSession?.id}<br/>
-            - currentCase MCQs count: {currentCase.mcqs?.length || 0}<br/>
-            - latestSession attempts count: {latestSession?.attempts?.length || 0}<br/>
-            <details>
-              <summary>View Engine Trace Log (Click to expand)</summary>
-              <pre className="mt-2 text-[10px] bg-white p-2 rounded whitespace-pre-wrap font-mono">
-                {currentCase.adaptiveDebugLog || "No trace available"}
-              </pre>
-            </details>
-            <details>
-              <summary>View Latest 3 Attempts (Click to expand)</summary>
-              <pre className="mt-2 text-[10px] bg-white p-2 rounded whitespace-pre-wrap">
-                {JSON.stringify(latestSession?.attempts?.slice(-3) || [], null, 2)}
-              </pre>
-            </details>
-            <details>
-              <summary>View MCQs (Click to expand)</summary>
-              <pre className="mt-2 text-[10px] bg-white p-2 rounded whitespace-pre-wrap">
-                {JSON.stringify(currentCase.mcqs?.map(q => ({ id: q.id, concept: q.primaryConceptId, diff: q.difficulty })) || [], null, 2)}
-              </pre>
-            </details>
-          </div>
+
 
           {currentCase.adaptiveDifficultyEnabled && adaptiveDecisions.length > 0 && (
             <div className="mb-6">
@@ -486,9 +460,6 @@ function IndividualResultsPageContent() {
       <div className="flex justify-between mt-8 pt-6 border-t border-white/10">
         <button onClick={() => router.push("/results")} className="btn btn-secondary">View Overall Results</button>
         <button onClick={handleStartNewCase} className="btn btn-primary px-8">Start New Case</button>
-        <div className="text-center mt-12 opacity-30 text-xs">
-          v1.0.4 | SESS: {latestSession?.id || 'none'} | ATTS: {latestSession?.attempts?.length || 0}
-        </div>
       </div>
     </div>
   );

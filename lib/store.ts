@@ -570,9 +570,10 @@ export const useCaseStore = create<CaseStore>()(
       deleteCase: (id) =>
         set((state) => ({
           cases: state.cases.filter((c) => c.id !== id),
+          globalAnalysis: null,
         })),
         
-      clearAllCases: () => set({ cases: [], conceptPerformances: {} }),
+      clearAllCases: () => set({ cases: [], conceptPerformances: {}, globalAnalysis: null }),
       
       updateConceptPerformance: (performance) => 
         set((state) => ({
@@ -863,6 +864,7 @@ export const useCaseStore = create<CaseStore>()(
 
       submitPracticeAttempt: (caseId, sessionId, attempt) =>
         set((state) => ({
+          globalAnalysis: null,
           cases: state.cases.map((c) => {
             if (c.id === caseId && c.practiceSessions) {
               return {

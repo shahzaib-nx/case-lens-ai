@@ -9,6 +9,7 @@ interface ConfirmOptions {
   confirmText?: string;
   cancelText?: string;
   danger?: boolean;
+  hideCancel?: boolean;
 }
 
 interface ConfirmContextType {
@@ -53,9 +54,11 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               {options.message}
             </p>
             <div className={styles.actions}>
-              <button onClick={handleCancel} className={`${styles.button} ${styles.buttonCancel}`}>
-                {options.cancelText || "Cancel"}
-              </button>
+              {!options.hideCancel && (
+                <button onClick={handleCancel} className={`${styles.button} ${styles.buttonCancel}`}>
+                  {options.cancelText || "Cancel"}
+                </button>
+              )}
               <button 
                 onClick={handleConfirm} 
                 className={`${styles.button} ${options.danger ? styles.buttonDanger : styles.buttonConfirm}`}

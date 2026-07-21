@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Advanced Learning Features:** Progressive Case Reveal, Pre-Answer Confidence Ratings, and Differential Diagnosis Builder.
 - **Phase-3 Cloud Sync:** Implement a local-first synchronization architecture for cross-device support.
 
+## [1.3.1] - 2026-07-21
+### Added
+- **Global UI Popups (`ConfirmProvider`)**: Completely eliminated all native browser alerts and confirms across the application, replacing them with a sleek, unified modal system that matches the application's aesthetic.
+- **Floating Notifications (`ToastProvider`)**: Implemented a global toast notification system for elegant, non-intrusive alerts (e.g., success messages, validation errors).
+- **Exam Mode Auto-Advance**: Exam mode practice sessions now seamlessly auto-advance to the next question upon submission, accompanied by a floating success toast, bypassing the learning mode's feedback delay.
+- **AI Resilience Engine**: Added a robust, automatic retry loop directly into the low-level `safeChatCompletion` wrapper to seamlessly recover from transient LLM failures (e.g., rate limits, invalid JSON responses) without crashing the application.
+
+### Fixed
+- **Stale AI Performance Analysis**: Implemented state invalidation logic to automatically clear out the cached AI Performance Analysis whenever a new practice attempt is recorded or a case is deleted, ensuring the user always sees the "Generate AI Analysis" button when data changes.
+- **Build Errors**: Fixed several async/await context issues in Next.js Client Components where event handlers utilizing the new `useConfirm` hook were missing asynchronous declarations.
+
 ## [1.3.0] - 2026-07-21
 ### Added
 - **Progressive Case Reveal:** Implemented staged case progression with AI splitting cases into sequential clinical stages, allowing learners to analyze information incrementally without leaking the final diagnosis.
