@@ -24,7 +24,7 @@ export default function ParticleBackground() {
       canvas.height = window.innerHeight;
       
       // Increase number of dots by reducing the divisor
-      const particleCount = Math.floor((window.innerWidth * window.innerHeight) / 1500);
+      const particleCount = Math.floor((window.innerWidth * window.innerHeight) / 500);
       particles = [];
       
       const colors = ["#4285F4", "#EA4335", "#FBBC05", "#A142F4", "#1a1a1a"];
