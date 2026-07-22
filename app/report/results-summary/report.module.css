@@ -187,3 +187,9 @@
     padding: 24px;
   }
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 12px 64px !important;
+  }
+}

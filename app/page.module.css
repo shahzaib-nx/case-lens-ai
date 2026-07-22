@@ -140,3 +140,9 @@ a.secondary {
     --button-secondary-border: #1a1a1a;
   }
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 12px 64px !important;
+  }
+}

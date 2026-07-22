@@ -1,13 +1,7 @@
 .page {
   min-height: calc(100svh - 130px);
   padding: 56px 24px 84px;
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(37, 99, 235, 0.04),
-      transparent 50%
-    ),
-    transparent;
+  
   color: var(--text-primary);
 }
 
@@ -188,5 +182,11 @@
   }
   .actionButton {
     width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 12px 64px !important;
   }
 }

@@ -137,8 +137,8 @@ export default function OverallResults() {
         </div>
 
         {/* Overall Combined Summary */}
-        <div className={styles.statsGrid} style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
-          <div className={styles.statCard} style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+        <div className={`${styles.statsGrid} ${styles.fourCol}`}>
+          <div className={`${styles.statCard} ${styles.span2}`}>
             <div>
               <span className={styles.statLabel} style={{ display: 'block' }}>Cases Attempted</span>
               <span className={styles.statValue} style={{ fontSize: '32px' }}>{summary.uniqueCases}</span>
@@ -149,7 +149,7 @@ export default function OverallResults() {
             </div>
           </div>
           
-          <div className={styles.statCard} style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+          <div className={`${styles.statCard} ${styles.span2}`}>
             <div>
               <span className={styles.statLabel} style={{ display: 'block' }}>Questions Solved</span>
               <span className={styles.statValue} style={{ fontSize: '32px' }}>{summary.answeredQuestions}</span>
@@ -184,8 +184,8 @@ export default function OverallResults() {
         </div>
 
         {/* Confidence Calibration */}
-        <div className={styles.statsGrid} style={{ marginTop: '24px', gridTemplateColumns: '1fr' }}>
-          <div className={styles.statCard} style={{ alignItems: 'flex-start', textAlign: 'left' }}>
+        <div className={`${styles.statsGrid} ${styles.oneCol}`}>
+          <div className={`${styles.statCard} ${styles.alignStart}`}>
             <span className={styles.statLabel} style={{ marginBottom: '20px' }}>Confidence Calibration</span>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', width: '100%', gap: '16px', marginBottom: '24px' }}>
@@ -263,17 +263,26 @@ export default function OverallResults() {
                 {weakConcepts.map((c, i) => (
                   <div key={i} className={styles.tableRow} style={{ gridTemplateColumns: '2.5fr 1fr 1fr 1fr 1.5fr 2fr' }}>
                     <div className={styles.conceptName}>{c.conceptLabel}</div>
-                    <div className={styles.conceptCount} style={{color: 'var(--error)', fontWeight: 'bold'}}>{c.errorCount}</div>
-                    <div className={styles.conceptCount}>{c.totalAnswered}</div>
+                    <div className={styles.conceptCount} style={{color: 'var(--error)', fontWeight: 'bold'}}>
+                      <span className={styles.mobileLabel}>Errors:</span>
+                      {c.errorCount}
+                    </div>
+                    <div className={styles.conceptCount}>
+                      <span className={styles.mobileLabel}>Questions Solved:</span>
+                      {c.totalAnswered}
+                    </div>
                     <div className={styles.conceptAccuracy} style={{justifyContent: 'center'}}>
+                      <span className={styles.mobileLabel}>Accuracy:</span>
                       <span className={`${styles.accuracyBadge} ${getAccuracyBadgeClass(c.accuracyPercentage)}`}>
                         {c.accuracyPercentage}%
                       </span>
                     </div>
                     <div className={styles.conceptCount} style={{color: c.highConfidenceErrorCount > 0 ? 'var(--error)' : 'inherit'}}>
+                      <span className={styles.mobileLabel}>High-Conf Errors:</span>
                       {c.highConfidenceErrorCount}
                     </div>
                     <div style={{fontSize: '13px', color: 'var(--text-secondary)', paddingLeft: '12px'}}>
+                      <span className={styles.mobileLabel}>Classification:</span>
                       {formatClassification(c.classification)}
                     </div>
                   </div>
@@ -298,15 +307,26 @@ export default function OverallResults() {
             {allConcepts.map((c, i) => (
               <div key={i} className={styles.tableRow} style={{ gridTemplateColumns: '2.5fr 1fr 1fr 1.5fr 1fr 2fr' }}>
                 <div className={styles.conceptName}>{c.conceptLabel}</div>
-                <div className={styles.conceptCount} style={{color: 'var(--success)'}}>{c.correctCount}</div>
-                <div className={styles.conceptCount} style={{color: c.errorCount > 0 ? 'var(--error)' : 'inherit'}}>{c.errorCount}</div>
-                <div className={styles.conceptCount}>{c.totalAnswered}</div>
+                <div className={styles.conceptCount} style={{color: 'var(--success)'}}>
+                  <span className={styles.mobileLabel}>Correct:</span>
+                  {c.correctCount}
+                </div>
+                <div className={styles.conceptCount} style={{color: c.errorCount > 0 ? 'var(--error)' : 'inherit'}}>
+                  <span className={styles.mobileLabel}>Errors:</span>
+                  {c.errorCount}
+                </div>
+                <div className={styles.conceptCount}>
+                  <span className={styles.mobileLabel}>Total Solved:</span>
+                  {c.totalAnswered}
+                </div>
                 <div className={styles.conceptAccuracy} style={{justifyContent: 'center'}}>
+                  <span className={styles.mobileLabel}>Accuracy:</span>
                   <span className={`${styles.accuracyBadge} ${getAccuracyBadgeClass(c.accuracyPercentage)}`}>
                     {c.accuracyPercentage}%
                   </span>
                 </div>
                 <div style={{fontSize: '13px', color: 'var(--text-secondary)', paddingLeft: '24px'}}>
+                  <span className={styles.mobileLabel}>Status:</span>
                   {formatClassification(c.classification)}
                 </div>
               </div>

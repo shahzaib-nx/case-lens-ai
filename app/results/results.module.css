@@ -1,24 +1,9 @@
+/* ==========================================================================
+   1. BASE STYLES (Typography, Colors, Borders, Shared Components)
+   ========================================================================== */
+
 .page {
-  min-height: calc(100svh - 130px);
-  padding: 56px 24px 84px;
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(37, 99, 235, 0.04),
-      transparent 50%
-    ),
-    transparent;
   color: var(--text-primary);
-}
-
-
-
-.headerRow {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 48px;
 }
 
 .pageHeader h1 {
@@ -35,11 +20,6 @@
   color: var(--text-secondary);
   font-size: 16px;
   line-height: 1.6;
-}
-
-.headerActions {
-  display: flex;
-  gap: 12px;
 }
 
 .actionButton {
@@ -108,25 +88,7 @@
   margin-bottom: 32px;
 }
 
-.emptyStateActions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 48px;
-}
-
 .statCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 20px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 24px;
@@ -173,8 +135,6 @@
 }
 
 .tableHeader {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--card-border);
   color: var(--text-secondary);
@@ -184,17 +144,7 @@
   letter-spacing: 0.08em;
 }
 
-.tableHeader > div:nth-child(2) {
-  text-align: center;
-}
-
-.tableHeader > div:nth-child(3) {
-  text-align: right;
-}
-
 .tableRow {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
   padding: 16px 0;
   border-bottom: 1px solid var(--card-border);
   align-items: center;
@@ -215,13 +165,6 @@
   text-align: center;
   color: var(--text-secondary);
   font-size: 15px;
-}
-
-.conceptAccuracy {
-  text-align: right;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
 }
 
 .accuracyBadge {
@@ -253,13 +196,6 @@
   border-radius: 24px;
   padding: 40px;
   box-shadow: 0 24px 60px rgba(37, 99, 235, 0.08);
-}
-
-.aiHeader {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
 }
 
 .aiIcon {
@@ -332,15 +268,199 @@
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
+
+/* ==========================================================================
+   2. DESKTOP LAYOUT (min-width: 769px)
+   ========================================================================== */
+@media (min-width: 769px) {
+  .page {
+    min-height: calc(100svh - 130px);
+    padding: 56px 24px 84px;
+  }
+  
   .headerRow {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  
+  .headerActions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .emptyStateActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+
+  .fourCol {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .oneCol {
+    grid-template-columns: 1fr;
+    margin-top: 24px;
+  }
+
+  .statCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+  }
+
+  .span2 {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .alignStart {
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .tableHeader {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+  
+  .tableHeader > div:nth-child(2) {
+    text-align: center;
+  }
+  
+  .tableHeader > div:nth-child(3) {
+    text-align: right;
+  }
+
+  .mobileLabel {
+    display: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 8px;
+  }
+
+  .tableRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+  
+  .conceptAccuracy {
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .aiHeader {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+}
+
+
+/* ==========================================================================
+   3. MOBILE LAYOUT (max-width: 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 12px 64px !important;
+  }
+  
+  .headerRow {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 32px;
   }
-  .statsGrid {
-    grid-template-columns: 1fr;
-  }
-  .emptyStateActions {
+  
+  .headerActions {
+    display: flex;
     flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+  
+  .emptyStateActions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .statsGrid, .fourCol, .oneCol {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .statCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .span2 {
+    grid-column: span 1 !important;
+    display: flex;
+    flex-direction: column !important;
+    gap: 16px;
+  }
+  
+  .alignStart {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .tableHeader {
+    display: none;
+  }
+
+  .tableRow {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .mobileLabel {
+    display: inline-block;
+  }
+  
+  .conceptCount {
+    text-align: left;
+  }
+  
+  .conceptAccuracy {
+    justify-content: flex-start;
+  }
+
+  .aiHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
   }
 }
